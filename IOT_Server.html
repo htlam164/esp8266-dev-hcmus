@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Station</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .block {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            border: 1px solid rgb(241, 7, 7);
+            border-radius: 25px;
+            padding: 30px;
+            width: 700px;
+            margin-top: 10px;
+            background-color: #f8e918;
+        }
+
+        .temp {
+            flex-direction: row;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 120px;
+            margin-left: 15px;
+        }
+
+        .tempVal {
+            flex-direction: row;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: rgb(2, 18, 243);
+            font-weight: 500;
+        }
+
+        .tempUnit {
+            flex-direction: row;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: rgb(2, 18, 243);
+        }
+
+        .tempO {
+            color: rgb(2, 18, 243);
+            font-size: 15px;
+            margin: 2px;
+        }
+
+        .button {
+            display: flex;
+            flex-direction: row;
+            background-color: #e7e7e7;
+            border: none;
+            color: rgb(158, 155, 155);
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 100px;
+            height: 60px;
+            cursor: pointer;
+        }
+
+        .button:focus {
+            outline: none;
+        }
+
+        /* Green */
+        .button1 {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* red */
+        .button2 {
+            background-color: #f44336;
+            color: white;
+        }
+
+        /* Yellow */
+        .button3 {
+            background-color: #ffe605;
+            color: white;
+        }
+
+        /*  */
+        .btn {
+            border: none;
+            outline: none;
+            padding: 10px 10px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 2px;
+            border-radius: 5px;
+        }
+
+        /* Style the active class, and buttons on mouse-over */
+        .active,
+        .btn:hover {
+            background-color: rgb(77, 79, 255);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Weather Station V1.0</h1>
+    <div id="server-status"></div>
+    <div id="stations"></div>
+    <div class="block">
+        <h1>Nhiệt Độ</h1>
+        <div class="temp">
+            <div class='tempVal' id="tempC"></div>
+            <div class='tempO'>o</div>
+            <div class='tempUnit'>C</div>
+        </div>
+        <div class="temp">
+            <div class='tempVal' id='tempF'></div>
+            <div class="tempO">o</div>
+            <div class='tempUnit'>F</div>
+        </div>
+    </div>
+
+    <div class="block">
+        <h1>Độ Ẩm</h1>
+        <div class="temp">
+            <div class='tempVal' id='humi'></div>
+            <div class="tempO"></div>
+            <div class='tempUnit'>%</div>
+        </div>
+    </div>
+    <div class="block">
+        <h1>Độ Phóng Xạ</h1>
+        <div class="temp">
+            <div class='tempVal' id='cpm'></div>
+            <div class="tempO"></div>
+            <div class='tempUnit'>cpm</div>
+        </div>
+        <div class="temp">
+            <div class='tempVal' id='mkzvHours'></div>
+            <div class="tempO"></div>
+            <div class='tempUnit'>uSv/h</div>
+        </div>
+    </div>
+
+    <script>
+        var led = { led1: 0, led2: 0, led3: 0 };
+        var stationID = "";
+        var socket = io();
+
+        $(document).ready(function () {
+            $("#bt1").click(function () {
+                led.led1 = !led.led1;
+                let led_msg = { led: led, id: stationID }
+                socket.emit("led", led_msg);
+            });
+            $("#bt2").click(function () {
+                led.led2 = !led.led2;
+                let led_msg = { led: led, id: stationID }
+                socket.emit("led", led_msg);
+            });
+            $("#bt3").click(function () {
+                var tempSetting = { freq: 5 }
+                led.led3 = !led.led3;
+                let led_msg = { led: led, id: stationID }
+                socket.emit("led", led_msg);
+            });
+
+        });
+
+        socket.on("stations", msg => {
+            $("#stations").empty();
+            console.log(msg);
+            msg.forEach(element => {
+                let isActiveTxt = element.id === stationID ? "active" : "";
+                let txt = $(`<button id=${element.id} class="btn ${isActiveTxt}"></button>`).text(element.name);
+                $("#stations").append(txt);
+                $(`#${element.id}`).click(function () {
+                    stationID = element.id;
+                    console.log(element.name);
+                    socket.emit("join-room", element.id);
+
+                    let current = document.getElementsByClassName("active");
+                    console.log(current);
+                    if (current.length > 0) {
+                        current[0].className = current[0].className.replace("active", "");
+                    }
+                    $(`#${element.id}`).addClass("active")
+                })
+            });
+        })
+
+        socket.on('ledStatus', (msg) => {
+            led = msg;
+            console.log(led);
+            if (led.led1 === true) {
+                $("#bt1").addClass('button1');
+            } else $("#bt1").removeClass('button1');
+            if (led.led2 === true) {
+                $("#bt2").addClass('button2');
+            } else $("#bt2").removeClass('button2');
+            if (led.led3 === true) {
+                $("#bt3").addClass('button3');
+            } else $("#bt3").removeClass('button3');
+        })
+        socket.on('temp2web', (msg) => {
+            $('#tempC').text(msg.tempC);
+            $('#humi').text(msg.humi);
+            $('#tempF').text(msg.tempF);
+            $('#cpm').text(msg.cpm);
+            $('#mkzvHours').text(msg.mkzvHours);
+        })
+
+        socket.on("connect", () => {
+            console.log("user ", socket.id, " connected");
+            $("#server-status").text("Server connected")
+        });
+
+        socket.on("disconnect", () => {
+            console.log("user ", socket.id, " disconnected");
+            $("#server-status").text("Server disconnected");
+            $("#stations").empty();
+            $("#bt1").removeClass('button1');
+            $("#bt2").removeClass('button2');
+            $("#bt3").removeClass('button3');
+            $('#tempC').text("");
+            $('#tempF').text("");
+        });
+
+
+    </script>
+</body>
+
+</html>
