@@ -8,6 +8,18 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
+        h1 {
+            color: black;
+        }
+        
+        h2 {
+            color: blue;
+        }
+        
+        div.a {
+            text-align: center;
+        }
+        
         .block {
             display: flex;
             flex-direction: row;
@@ -20,7 +32,7 @@
             margin-top: 10px;
             background-color: #f8e918;
         }
-
+        
         .temp {
             flex-direction: row;
             display: flex;
@@ -29,7 +41,7 @@
             width: 120px;
             margin-left: 15px;
         }
-
+        
         .tempVal {
             flex-direction: row;
             display: flex;
@@ -39,7 +51,7 @@
             color: rgb(2, 18, 243);
             font-weight: 500;
         }
-
+        
         .tempUnit {
             flex-direction: row;
             display: flex;
@@ -48,13 +60,13 @@
             font-size: 20px;
             color: rgb(2, 18, 243);
         }
-
+        
         .tempO {
             color: rgb(2, 18, 243);
             font-size: 15px;
             margin: 2px;
         }
-
+        
         .button {
             display: flex;
             flex-direction: row;
@@ -70,30 +82,30 @@
             height: 60px;
             cursor: pointer;
         }
-
+        
         .button:focus {
             outline: none;
         }
-
         /* Green */
+        
         .button1 {
             background-color: #4CAF50;
             color: white;
         }
-
         /* red */
+        
         .button2 {
             background-color: #f44336;
             color: white;
         }
-
         /* Yellow */
+        
         .button3 {
             background-color: #ffe605;
             color: white;
         }
-
         /*  */
+        
         .btn {
             border: none;
             outline: none;
@@ -104,19 +116,53 @@
             margin: 2px;
             border-radius: 5px;
         }
-
         /* Style the active class, and buttons on mouse-over */
+        
         .active,
         .btn:hover {
             background-color: rgb(77, 79, 255);
             color: white;
         }
     </style>
+
 </head>
 
 <body>
-    <h1>Weather Station V1.0</h1>
+    <div class="a">
+        <h1>Weather Station V1.0</h1>
+        <h2>
+            <p id="hvn"></p>
+        </h2>
+    </div>
     <div id="server-status"></div>
+    <script>
+        function dongho() {
+            var today = new Date();
+            var day = today.getDate()
+            var month = today.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+            if (day < 10) {
+                day = "0" + day;
+            }
+            var date = day + '-' + month + '-' + today.getFullYear();
+            var gio = today.getHours();
+            var phut = today.getMinutes();
+            var giay = today.getSeconds();
+            if (gio < 10)
+                gio = "0" + gio;
+            if (phut < 10)
+                phut = "0" + phut;
+            if (giay < 10)
+                giay = "0" + giay;
+            var time = gio + ":" + phut + ":" + giay;
+            var dateTime = date + " " + time;
+            document.getElementById("hvn").innerHTML = dateTime;
+            setTimeout("dongho()", 1000);
+        }
+        dongho();
+    </script>
     <div id="stations"></div>
     <div class="block">
         <h1>Nhiệt Độ</h1>
@@ -155,25 +201,40 @@
     </div>
 
     <script>
-        var led = { led1: 0, led2: 0, led3: 0 };
+        var led = {
+            led1: 0,
+            led2: 0,
+            led3: 0
+        };
         var stationID = "";
         var socket = io();
 
-        $(document).ready(function () {
-            $("#bt1").click(function () {
+        $(document).ready(function() {
+            $("#bt1").click(function() {
                 led.led1 = !led.led1;
-                let led_msg = { led: led, id: stationID }
+                let led_msg = {
+                    led: led,
+                    id: stationID
+                }
                 socket.emit("led", led_msg);
             });
-            $("#bt2").click(function () {
+            $("#bt2").click(function() {
                 led.led2 = !led.led2;
-                let led_msg = { led: led, id: stationID }
+                let led_msg = {
+                    led: led,
+                    id: stationID
+                }
                 socket.emit("led", led_msg);
             });
-            $("#bt3").click(function () {
-                var tempSetting = { freq: 5 }
+            $("#bt3").click(function() {
+                var tempSetting = {
+                    freq: 5
+                }
                 led.led3 = !led.led3;
-                let led_msg = { led: led, id: stationID }
+                let led_msg = {
+                    led: led,
+                    id: stationID
+                }
                 socket.emit("led", led_msg);
             });
 
@@ -186,7 +247,7 @@
                 let isActiveTxt = element.id === stationID ? "active" : "";
                 let txt = $(`<button id=${element.id} class="btn ${isActiveTxt}"></button>`).text(element.name);
                 $("#stations").append(txt);
-                $(`#${element.id}`).click(function () {
+                $(`#${element.id}`).click(function() {
                     stationID = element.id;
                     console.log(element.name);
                     socket.emit("join-room", element.id);
@@ -237,8 +298,6 @@
             $('#tempC').text("");
             $('#tempF').text("");
         });
-
-
     </script>
 </body>
 
