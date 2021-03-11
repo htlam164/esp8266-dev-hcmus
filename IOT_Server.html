@@ -25,7 +25,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-around;
-            border: 1px solid rgb(218, 6, 6);
+            border: 1px solid blue;
             border-radius: 25px;
             padding: 30px;
             width: 700px;
@@ -86,25 +86,6 @@
         .button:focus {
             outline: none;
         }
-        /* Green */
-        
-        .button1 {
-            background-color: #4CAF50;
-            color: white;
-        }
-        /* red */
-        
-        .button2 {
-            background-color: #f44336;
-            color: white;
-        }
-        /* Yellow */
-        
-        .button3 {
-            background-color: #ffe605;
-            color: white;
-        }
-        /*  */
         
         .btn {
             border: none;
@@ -135,6 +116,7 @@
         </h2>
     </div>
     <div id="server-status"></div>
+    <div id="server-status-station"></div>
     <script>
         function dongho() {
             var today = new Date();
@@ -201,44 +183,8 @@
     </div>
 
     <script>
-        var led = {
-            led1: 0,
-            led2: 0,
-            led3: 0
-        };
         var stationID = "";
         var socket = io();
-
-        $(document).ready(function() {
-            $("#bt1").click(function() {
-                led.led1 = !led.led1;
-                let led_msg = {
-                    led: led,
-                    id: stationID
-                }
-                socket.emit("led", led_msg);
-            });
-            $("#bt2").click(function() {
-                led.led2 = !led.led2;
-                let led_msg = {
-                    led: led,
-                    id: stationID
-                }
-                socket.emit("led", led_msg);
-            });
-            $("#bt3").click(function() {
-                var tempSetting = {
-                    freq: 5
-                }
-                led.led3 = !led.led3;
-                let led_msg = {
-                    led: led,
-                    id: stationID
-                }
-                socket.emit("led", led_msg);
-            });
-
-        });
 
         socket.on("stations", msg => {
             $("#stations").empty();
@@ -261,25 +207,13 @@
             });
         })
 
-        socket.on('ledStatus', (msg) => {
-            led = msg;
-            console.log(led);
-            if (led.led1 === true) {
-                $("#bt1").addClass('button1');
-            } else $("#bt1").removeClass('button1');
-            if (led.led2 === true) {
-                $("#bt2").addClass('button2');
-            } else $("#bt2").removeClass('button2');
-            if (led.led3 === true) {
-                $("#bt3").addClass('button3');
-            } else $("#bt3").removeClass('button3');
-        })
         socket.on('temp2web', (msg) => {
             $('#tempC').text(msg.tempC);
             $('#humi').text(msg.humi);
             $('#tempF').text(msg.tempF);
             $('#cpm').text(msg.cpm);
             $('#mkzvHours').text(msg.mkzvHours);
+            $('#server-status-station').text(msg.status);
         })
 
         socket.on("connect", () => {
@@ -291,11 +225,11 @@
             console.log("user ", socket.id, " disconnected");
             $("#server-status").text("Server disconnected");
             $("#stations").empty();
-            $("#bt1").removeClass('button1');
-            $("#bt2").removeClass('button2');
-            $("#bt3").removeClass('button3');
             $('#tempC').text("");
             $('#tempF').text("");
+            $('#cpm').text("");
+            $('#mkzvHours').text("");
+            $('#humi').text("");
         });
     </script>
 </body>

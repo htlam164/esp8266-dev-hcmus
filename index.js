@@ -41,15 +41,6 @@ io.on("connection", (socket) => {
         io.emit("stations", stations);
     });
 
-    socket.on("update-station", (station) => {
-        console.log("station will updated: ", station.name, ": ", station.id);
-        let isStationUpdate = (element) => element.id == station.id;
-        let index = stations.findIndex(isStationUpdate);
-        stations[index] = station;
-        console.log("updated station info: ", stations[index]);
-        io.emit("stations", stations);
-    });
-
     socket.on("list-rooms", (msg) => {
         console.log(stations);
         io.emit("stations", stations);
@@ -71,13 +62,4 @@ io.on("connection", (socket) => {
         io.to(socket.id).emit("temp2web", msg);
     });
 
-    socket.on("led", (msg) => {
-        console.log("Web control led: ", msg);
-        io.to(msg.id).emit("led", msg.led);
-    });
-
-    socket.on("ledStatus", (msg) => {
-        console.log("Led status from station: ", msg);
-        io.to(socket.id).emit("ledStatus", msg);
-    });
 });
