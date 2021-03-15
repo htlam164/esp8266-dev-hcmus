@@ -2,10 +2,21 @@ var app = require("express")();
 var http = require("http").createServer(app);
 var io = require("socket.io")(http);
 
+
 var stations = [];
 var stations_ID = [];
 var ledInit = { led1: null, led2: null, led3: null };
 var tempNull = { tempC: "", tempF: "" };
+
+const MongoClient = require('mongodb').MongoClient;
+
+
+
+// Replace the following with your Atlas connection string
+const url =
+    "mongodb+srv://vutrantienbao290699:vutrantienbao2906@project.murnk.mongodb.net/test?retryWrites=true&w=majority";
+
+const client = new MongoClient(url);
 
 const PORT = 3484;
 http.listen(process.env.PORT || PORT, console.log("server running ", PORT));
@@ -58,8 +69,21 @@ io.on("connection", (socket) => {
     });
 
     socket.on("temp", (msg) => {
-        console.log(msg);
-        io.to(socket.id).emit("temp2web", msg);
+
+
+        const dbName = "test";
+        try {
+            console.log(msg);
+            io.to(socket.id).emit("temp2web", msg);
+            client.connect();
+            console.log("Connected correctly to server");
+            const db = client.db(dbName);
+            // Use the collection "people"
+            const col = db.collection("dataRewes");
+            const p = col.insertOne(msg);
+        } catch (err) {
+            console.log(err.stack);
+        }
     });
 
 });
