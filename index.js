@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
         console.log(msg);
         io.to(socket.id).emit("temp2web", msg);
         const dbName = "test";
-        if (msgstatus.status == 1) {
+        if (msgstatus.status === 1) {
             try {
                 client.connect();
                 console.log("Connected correctly to server");
@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
                 console.log(err.stack);
             }
         }
-        if (msgstatus.status == 3) {
+        if (msgstatus.status === 3) {
             try {
                 client.connect();
                 console.log("Connected correctly to server");
@@ -96,7 +96,7 @@ io.on("connection", (socket) => {
                 console.log(err.stack);
             }
         }
-        if (msgstatus.status == 2) {
+        if (msgstatus.status === 2) {
             try {
                 client.connect();
                 console.log("Connected correctly to server");
@@ -108,7 +108,7 @@ io.on("connection", (socket) => {
                 console.log(err.stack);
             }
         }
-        if (msgstatus.status == 4) {
+        if (msgstatus.status === 4) {
             try {
                 client.connect();
                 console.log("Connected correctly to server");
@@ -120,7 +120,7 @@ io.on("connection", (socket) => {
                 console.log(err.stack);
             }
         }
-        if (msgstatus.status == 5) {
+        if (msgstatus.status === 5) {
             try {
                 client.connect();
                 console.log("Connected correctly to server");
@@ -132,7 +132,7 @@ io.on("connection", (socket) => {
                 console.log(err.stack);
             }
         }
-        if (msgstatus.status == 6) {
+        if (msgstatus.status === 6) {
             try {
                 client.connect();
                 console.log("Connected correctly to server");
