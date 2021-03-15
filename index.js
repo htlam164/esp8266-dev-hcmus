@@ -69,21 +69,80 @@ io.on("connection", (socket) => {
     });
 
     socket.on("temp", (msg) => {
-
-
+        console.log(msg);
+        io.to(socket.id).emit("temp2web", msg);
         const dbName = "test";
-        try {
-            console.log(msg);
-            io.to(socket.id).emit("temp2web", msg);
-            client.connect();
-            console.log("Connected correctly to server");
-            const db = client.db(dbName);
-            // Use the collection "people"
-            const col = db.collection("dataRewes");
-            const p = col.insertOne(msg);
-        } catch (err) {
-            console.log(err.stack);
+        if (msgstatus.status == 1) {
+            try {
+                client.connect();
+                console.log("Connected correctly to server");
+                const db = client.db(dbName);
+                // Use the collection "people"
+                const col = db.collection("Tram_1");
+                const p = col.insertOne(msg);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+        if (msgstatus.status == 3) {
+            try {
+                client.connect();
+                console.log("Connected correctly to server");
+                const db = client.db(dbName);
+                // Use the collection "people"
+                const col = db.collection("Tram_3");
+                const p = col.insertOne(msg);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+        if (msgstatus.status == 2) {
+            try {
+                client.connect();
+                console.log("Connected correctly to server");
+                const db = client.db(dbName);
+                // Use the collection "people"
+                const col = db.collection("Tram_2");
+                const p = col.insertOne(msg);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+        if (msgstatus.status == 4) {
+            try {
+                client.connect();
+                console.log("Connected correctly to server");
+                const db = client.db(dbName);
+                // Use the collection "people"
+                const col = db.collection("Tram_4");
+                const p = col.insertOne(msg);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+        if (msgstatus.status == 5) {
+            try {
+                client.connect();
+                console.log("Connected correctly to server");
+                const db = client.db(dbName);
+                // Use the collection "people"
+                const col = db.collection("Tram_5");
+                const p = col.insertOne(msg);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+        if (msgstatus.status == 6) {
+            try {
+                client.connect();
+                console.log("Connected correctly to server");
+                const db = client.db(dbName);
+                // Use the collection "people"
+                const col = db.collection("Tram_6");
+                const p = col.insertOne(msg);
+            } catch (err) {
+                console.log(err.stack);
+            }
         }
     });
-
 }); //ok baby
